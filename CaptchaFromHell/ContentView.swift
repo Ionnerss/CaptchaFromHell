@@ -32,15 +32,25 @@ struct CaptchaTile: View {
     }
 }
 
-
+struct TileChallenge {
+    let instructions: String
+    let tileIds: Array<Int>
+    let correctTiles: Set<Int>
+}
 
 struct ContentView: View {
     @State private var selectedTiles: Set<Int> = []
     @State private var verifyTapped: Bool = false
     
+    let tileChallenge = TileChallenge(
+        instructions: "Select tiles 2, 5, and 9",
+        tileIds: Array(1...9),
+        correctTiles: [2, 5, 9]
+    )
+    
     var body: some View {
         VStack {
-            Text("Select tiles 2, 5, and 9")
+            Text(tileChallenge.instructions)
             
             ScrollView {
                 LazyVGrid(columns: [
@@ -48,7 +58,7 @@ struct ContentView: View {
                     .init(.fixed(100), spacing: 4),
                     .init(.fixed(100), spacing: 4)
                 ], spacing: 4) {
-                    ForEach(1...9, id: \.self) { index in
+                    ForEach(tileChallenge.tileIds, id: \.self) { index in
                         CaptchaTile(
                             id: index,
                             isSelected: selectedTiles.contains(index),
@@ -67,7 +77,7 @@ struct ContentView: View {
             .buttonStyle(.borderedProminent)
             
             if verifyTapped == true {
-                if selectedTiles == [2, 5, 9] {
+                if selectedTiles == tileChallenge.correctTiles {
                     Text("pass")
                 } else {
                     Text("fail")
